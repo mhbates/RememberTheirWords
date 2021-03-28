@@ -33,6 +33,20 @@ def inputWord(word):
         open(FILENAME, 'a+').write(str(word) + '\n')
         print("Word added")
 
+def grabWord():
+    # Count lines in order to randomize
+    count = 0
+    for line in open(FILENAME):
+        count += 1
+
+    # Select a random number based on # of lines
+    randomLine = randrange(count)
+
+    # Print the line based on that random number
+    return(open(FILENAME).readlines()[randomLine])
+
+    # TODO: Prevent repeats of words; iterate through list in a random/shuffle way
+
 def main():
     # Prep list file
     fileName = FILENAME
@@ -64,10 +78,14 @@ def main():
     # Word entry box
     wordEntry = ttk.Entry(mainframe, width = 14)
     wordEntry.grid(column = 2, row = 1, sticky= (W, E))
-
     # Word entry button
     ttk.Button(mainframe, text="Enter word", command=lambda: inputWord(wordEntry.get())).grid(column=3, row=1, sticky=W)
 
+    # Retrieve random word
+    wordRetrieval = ttk.Entry(mainframe, width = 14)
+    wordRetrieval.grid(column = 2, row = 2, sticky = (W, E))
+    # Word retrieval button
+    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
 
     # Exit flag for while loop
     exitLoop = 0
