@@ -39,10 +39,14 @@ def grabWord():
     for line in open(FILENAME):
         count += 1
 
+    # If empty
+    if count is 0:
+        return "[list is empty]"
+
     # Select a random number based on # of lines
     randomLine = randrange(count)
 
-    # Print the line based on that random number
+    # Return the line based on that random number
     return(open(FILENAME).readlines()[randomLine])
 
     # TODO: Prevent repeats of words; iterate through list in a random/shuffle way
