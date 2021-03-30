@@ -2,6 +2,7 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 
 # For random word output
 from random import randrange
@@ -51,6 +52,12 @@ def grabWord():
 
     # TODO: Prevent repeats of words; iterate through list in a random/shuffle way
 
+def listAllWords():
+    str1 = ""
+    for line in open(FILENAME):
+        str1 += line
+    return str1
+
 def main():
     # Prep list file
     fileName = FILENAME
@@ -90,6 +97,10 @@ def main():
     wordRetrieval.grid(column = 2, row = 2, sticky = (W, E))
     # Word retrieval button
     ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
+
+    # List all words
+    wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=listAllWords())
+    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=3, sticky=W)
 
     # Exit flag for while loop
     exitLoop = 0
