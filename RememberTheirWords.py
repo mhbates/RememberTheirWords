@@ -3,12 +3,26 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import sqlite3
+from sqlite3 import Error
 
 # For random word output
 from random import randrange
 
 # filename constant
 FILENAME = "list.txt"
+
+def create_connection(db_file):
+    # create a database connection to a SQLite database
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        print(sqlite3.version)
+    except Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
 
 
 def inputWord(word):
@@ -41,7 +55,7 @@ def grabWord():
         count += 1
 
     # If empty
-    if count is 0:
+    if count == 0:
         return "[list is empty]"
 
     # Select a random number based on # of lines
@@ -70,6 +84,9 @@ def main():
     except TypeError:
         print("Type Error")
         exit
+
+    # Connect/create database
+    create_connection(r"database.sqlite3")
 
     # Prep GUI
     root = tkinter.Tk()
@@ -102,59 +119,10 @@ def main():
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=listAllWords())
     ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=3, sticky=W)
 
-    # Exit flag for while loop
-    exitLoop = 0
+    # Exit program
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=4, sticky=W)
 
-    while exitLoop == 0:
-        # Start Menu
-        print("Press 1 to enter a word, 2 to print a random word, 3 to print all words, or 4 to quit: ")
-        choice = input()
-
-        if choice == '1':
-            
-            # Word input
-
-            # TODO:
-            #   Add to database. Sqlite?
-            #   Check word against database
-            #   Timestamp of entry?
-
-            print("Enter a word to remember: ")
-            word = input()
-
-            # See if input word already exists in list
-            wordExists = False
-            for line in open(fileName):
-                if word in line:
-                    wordExists = True
-                    print("Word already exists")
-                    break
-
-            # If input word doesn't exist yet, add it to list
-            if wordExists == False:
-                file.write(word + '\n')
-                print("Word added")
-
-        if choice == '2':
-            # Count lines in order to randomize
-            count = 0
-            for line in open(fileName):
-                count += 1
-
-            # Select a random number based on # of lines
-            randomLine = randrange(count)
-
-            # Print the line based on that random number
-            print(open(fileName).readlines()[randomLine])
-
-            # TODO: Prevent repeats of words; iterate through list in a random/shuffle way
-
-        if choice == '3':
-            print(open(fileName).read())
-
-        if choice == '4':
-            exitLoop = 1
-        
+    root.mainloop()
 
     # Close list file
     file.close()
