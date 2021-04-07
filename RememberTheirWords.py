@@ -17,8 +17,6 @@ def create_connection(db_file):
     connection = None
     try:
         connection = sqlite3.connect(db_file)
-        print(sqlite3.version)
-        return connection
     except Error as e:
         print(e)
     return connection
@@ -34,6 +32,13 @@ def create_table(connection, create_table_sql):
         c.execute(create_table_sql)
     except Error as e:
         print(e)
+
+def insert_word(connection, word):
+    sql = 'INSERT INTO wordTable(word) VALUES(?)'
+    c = connection.cursor()
+    c.execute(sql, [word])
+    connection.commit()
+    return c.lastrowid
 
 def inputWord(word):
     # Word input
@@ -101,10 +106,10 @@ def main():
 
     # Define database table
     sql_create_table = """ CREATE TABLE IF NOT EXISTS wordTable (
-        id integer PRIAMRY KEY, word text NOT NULL
+        id integer PRIMARY KEY, word text NOT NULL
         ) """
 
-    # Create table, if it doesn't exist
+    # Create table if it doesn't exist
     if connection is not None:
         create_table(connection, sql_create_table)
     else:
@@ -129,7 +134,8 @@ def main():
     wordEntry = ttk.Entry(mainframe, width = 14)
     wordEntry.grid(column = 2, row = 1, sticky= (W, E))
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: inputWord(wordEntry.get())).grid(column=3, row=1, sticky=W)
+    ttk.Button(mainframe, text="Enter word", command=lambda: insert_word(connection, wordEntry.get())).grid(column=3, row=1, sticky=W)
+    #ttk.Button(mainframe, text="Enter word", command=lambda: inputWord(wordEntry.get())).grid(column=3, row=1, sticky=W)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
