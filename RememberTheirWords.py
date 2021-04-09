@@ -40,6 +40,15 @@ def insert_word(connection, word):
     connection.commit()
     return c.lastrowid
 
+def list_words(connection):
+    c = connection.cursor()
+    c.execute('SELECT word FROM wordTable')
+    lines = c.fetchall()
+    stringWords = ''
+    for line in lines:
+        stringWords += str(line[0]) + '\n'
+    return stringWords
+
 def inputWord(word):
     # Word input
 
@@ -144,7 +153,7 @@ def main():
     ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
 
     # List all words
-    wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=listAllWords())
+    wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
     ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=3, sticky=W)
 
     # Exit program
