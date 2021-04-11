@@ -34,6 +34,9 @@ def create_table(connection, create_table_sql):
         print(e)
 
 def insert_word(connection, word):
+    if search_words(connection, word) == True:
+        tkinter.messagebox.showinfo(title="Error",message="Word already exists in database")
+        return
     sql = 'INSERT INTO wordTable(word) VALUES(?)'
     c = connection.cursor()
     c.execute(sql, [word])
@@ -59,6 +62,15 @@ def list_words(connection):
         stringWords += str(line[0]) + '\n'
     return stringWords
 
+def search_words(connection, word):
+    sql = 'SELECT word FROM wordTable WHERE word = ?'
+    c = connection.cursor()
+    c.execute(sql, [word])
+    lines = c.fetchall()
+    if lines == []:
+        return False
+    return True
+    
 def inputWord(word):
     # Word input
 
@@ -153,7 +165,7 @@ def main():
     wordEntry = ttk.Entry(mainframe, width = 14)
     wordEntry.grid(column = 2, row = 1, sticky= (W, E))
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: insert_word(connection, wordEntry.get())).grid(column=3, row=1, sticky=W)
+    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get()),wordEntry.delete(0,'end')]).grid(column=3, row=1, sticky=W)
     #ttk.Button(mainframe, text="Enter word", command=lambda: inputWord(wordEntry.get())).grid(column=3, row=1, sticky=W)
 
     # Retrieve random word
