@@ -40,6 +40,16 @@ def insert_word(connection, word):
     connection.commit()
     return c.lastrowid
 
+def grab_word(connection):
+    sql = 'SELECT word FROM wordTable ORDER BY RANDOM() LIMIT 1'
+    c = connection.cursor()
+    c.execute(sql)
+    lines = c.fetchall()
+    stringWords = ''
+    for line in lines:
+        stringWords += str(line[0])
+    return stringWords
+
 def list_words(connection):
     c = connection.cursor()
     c.execute('SELECT word FROM wordTable')
@@ -150,7 +160,8 @@ def main():
     wordRetrieval = ttk.Entry(mainframe, width = 14)
     wordRetrieval.grid(column = 2, row = 2, sticky = (W, E))
     # Word retrieval button
-    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
+    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=2, sticky=W)
+    #ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
 
     # List all words
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
