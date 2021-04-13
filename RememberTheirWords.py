@@ -34,6 +34,9 @@ def create_table(connection, create_table_sql):
         print(e)
 
 def insert_word(connection, word):
+    if word == '':
+        tkinter.messagebox.showinfo(title="Error",message="No word entered")
+        return
     if search_words(connection, word) == True:
         tkinter.messagebox.showinfo(title="Error",message="Word already exists in database")
         return
