@@ -70,6 +70,16 @@ def search_words(connection, word):
     if lines == []:
         return False
     return True
+
+def delete_word(connection, word):
+    if search_words(connection, word) == True:
+        sql = 'DELETE FROM wordTable WHERE word = ?'
+        c = connection.cursor()
+        c.execute(sql, [word])
+        connection.commit()
+        tkinter.messagebox.showinfo(title="Success",message="Word deleted")
+    else:
+        tkinter.messagebox.showinfo(title="Error",message="Word does not exist")
     
 def inputWord(word):
     # Word input
@@ -179,8 +189,13 @@ def main():
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
     ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=3, sticky=W)
 
+    # Delete word
+    wordDeletion = ttk.Entry(mainframe, width = 14)
+    wordDeletion.grid(column = 2, row = 4, sticky = (W, E))
+    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky=W)
+
     # Exit program
-    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=4, sticky=W)
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=5, sticky=W)
 
     root.mainloop()
 
