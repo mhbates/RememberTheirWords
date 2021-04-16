@@ -9,9 +9,6 @@ from sqlite3 import Error
 # For random word output
 from random import randrange
 
-# filename constant
-FILENAME = "list.txt"
-
 def create_connection(db_file):
     # create a database connection to a SQLite database
     connection = None
@@ -83,66 +80,8 @@ def delete_word(connection, word):
         tkinter.messagebox.showinfo(title="Success",message="Word deleted")
     else:
         tkinter.messagebox.showinfo(title="Error",message="Word does not exist")
-    
-def inputWord(word):
-    # Word input
-
-    print("Word: " + word)
-
-    # TODO:
-    #   Add to database. Sqlite?
-    #   Check word against database
-    #   Timestamp of entry?
-
-    # See if input word already exists in list
-    wordExists = False
-    for line in open(FILENAME):
-        if word in line:
-            wordExists = True
-            print("Word already exists")
-            break
-
-    # If input word doesn't exist yet, add it to list
-    if wordExists == False:
-        open(FILENAME, 'a+').write(str(word) + '\n')
-        print("Word added")
-
-def grabWord():
-    # Count lines in order to randomize
-    count = 0
-    for line in open(FILENAME):
-        count += 1
-
-    # If empty
-    if count == 0:
-        return "[list is empty]"
-
-    # Select a random number based on # of lines
-    randomLine = randrange(count)
-
-    # Return the line based on that random number
-    return(open(FILENAME).readlines()[randomLine])
-
-    # TODO: Prevent repeats of words; iterate through list in a random/shuffle way
-
-def listAllWords():
-    str1 = ""
-    for line in open(FILENAME):
-        str1 += line
-    return str1
 
 def main():
-    # Prep list file
-    fileName = FILENAME
-    # Open list for append+read, or create if it doesn't exist
-    try:
-        file = open(fileName, 'a+')
-    except IOError:
-        print("IO Error")
-        exit
-    except TypeError:
-        print("Type Error")
-        exit
 
     # Connect/create database
     database = r"database.sqlite3"
@@ -179,14 +118,12 @@ def main():
     wordEntry.grid(column = 2, row = 1, sticky= (W, E))
     # Word entry button
     ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get()),wordEntry.delete(0,'end')]).grid(column=3, row=1, sticky=W)
-    #ttk.Button(mainframe, text="Enter word", command=lambda: inputWord(wordEntry.get())).grid(column=3, row=1, sticky=W)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
     wordRetrieval.grid(column = 2, row = 2, sticky = (W, E))
     # Word retrieval button
     ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=2, sticky=W)
-    #ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grabWord())]).grid(column=3, row=2, sticky=W)
 
     # List all words
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
@@ -201,8 +138,5 @@ def main():
     ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=5, sticky=W)
 
     root.mainloop()
-
-    # Close list file
-    file.close()
 
 main()
