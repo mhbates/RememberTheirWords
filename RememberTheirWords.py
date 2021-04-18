@@ -104,7 +104,7 @@ def main():
 
     # GUI Mainframe
     # Create frame widget to hold everything (within the root window); include padding
-    mainframe = ttk.Frame(root, padding="3 3 12 12")
+    mainframe = ttk.Frame(root, padding=(6,6,12,12))
     # Set mainframe up as grid structure
     mainframe.grid(column = 0, row = 0, sticky = (N, W, E, S))
 
@@ -114,28 +114,37 @@ def main():
 
     # Set up various widgets
     # Word entry box
+    wordEntryLabel = ttk.Label(mainframe, text = "Enter word here: ")
+    wordEntryLabel.grid(column = 1, row = 1, sticky = (E))
     wordEntry = ttk.Entry(mainframe, width = 14)
-    wordEntry.grid(column = 2, row = 1, sticky= (W, E))
+    wordEntry.grid(column = 2, row = 1, sticky = (W, E))
+
+    # Date entry box
+    dateEntryLabel = ttk.Label(mainframe, text = "Enter date (yyyy-mm-dd) here: ")
+    dateEntryLabel.grid(column = 1, row = 2, sticky = (E))
+    dateEntry = ttk.Entry(mainframe, width = 14)
+    dateEntry.grid(column = 2, row = 2, sticky = (W,E))
+
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get()),wordEntry.delete(0,'end')]).grid(column=3, row=1, sticky=W)
+    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get()),wordEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky=W, pady = 7, ipady = 10, ipadx = 10)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
-    wordRetrieval.grid(column = 2, row = 2, sticky = (W, E))
+    wordRetrieval.grid(column = 2, row = 3, sticky = (W, E), pady = 7)
     # Word retrieval button
-    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=2, sticky=W)
+    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=3, sticky=W)
 
     # List all words
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
-    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=3, sticky=W)
+    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=4, sticky=W, pady = 7)
 
     # Delete word
     wordDeletion = ttk.Entry(mainframe, width = 14)
-    wordDeletion.grid(column = 2, row = 4, sticky = (W, E))
-    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky=W)
+    wordDeletion.grid(column = 2, row = 5, sticky = (W, E), pady = 7)
+    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=5, sticky=W)
 
     # Exit program
-    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=5, sticky=W)
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=6, sticky=W, pady = 7)
 
     root.mainloop()
 
