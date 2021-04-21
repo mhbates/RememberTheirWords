@@ -81,6 +81,17 @@ def delete_word(connection, word):
     else:
         tkinter.messagebox.showinfo(title="Error",message="Word does not exist")
 
+def export_list(connection):
+    c = connection.cursor()
+    sql = 'SELECT word,wordDate FROM wordTable'
+    lines = c.fetchall()
+    stringWords = ''
+    for line in lines:
+        stringWords += str(line[0]) + ' (' + str(line[1]) + ')\n'
+    # refer to old CLI code regarding creating/opening the txt file, writing lines to it, etc.
+    # add button for this
+    # return stringWords
+
 def main():
 
     # Connect/create database
