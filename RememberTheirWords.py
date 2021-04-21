@@ -30,16 +30,16 @@ def create_table(connection, create_table_sql):
     except Error as e:
         print(e)
 
-def insert_word(connection, word):
+def insert_word(connection, word, date):
     if word == '':
         tkinter.messagebox.showinfo(title="Error",message="No word entered")
         return
     if search_words(connection, word) == True:
         tkinter.messagebox.showinfo(title="Error",message="Word already exists in database")
         return
-    sql = 'INSERT INTO wordTable(word) VALUES(?)'
+    sql = 'INSERT INTO wordTable(word, wordDate) VALUES(?,?)'
     c = connection.cursor()
-    c.execute(sql, [word])
+    c.execute(sql, [word,date])
     connection.commit()
     return c.lastrowid
 
@@ -55,11 +55,11 @@ def grab_word(connection):
 
 def list_words(connection):
     c = connection.cursor()
-    c.execute('SELECT word FROM wordTable')
+    c.execute('SELECT word,wordDate FROM wordTable')
     lines = c.fetchall()
     stringWords = ''
     for line in lines:
-        stringWords += str(line[0]) + '\n'
+        stringWords += str(line[0]) + ' (' + str(line[1]) + ')\n'
     return stringWords
 
 def search_words(connection, word):
@@ -89,7 +89,7 @@ def main():
 
     # Define database table
     sql_create_table = """ CREATE TABLE IF NOT EXISTS wordTable (
-        id integer PRIMARY KEY, word text NOT NULL
+        id integer PRIMARY KEY, word text NOT NULL, wordDate date
         ) """
 
     # Create table if it doesn't exist
@@ -126,7 +126,7 @@ def main():
     dateEntry.grid(column = 2, row = 2, sticky = (W,E))
 
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get()),wordEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky=W, pady = 7, ipady = 10, ipadx = 10)
+    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get(), dateEntry.get()),wordEntry.delete(0,'end'),dateEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky=W, pady = 7, ipady = 10, ipadx = 10)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
