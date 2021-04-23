@@ -54,8 +54,9 @@ def grab_word(connection):
     return stringWords
 
 def list_words(connection):
+    sql = 'SELECT word,wordDate FROM wordTable'
     c = connection.cursor()
-    c.execute('SELECT word,wordDate FROM wordTable')
+    c.execute(sql)
     lines = c.fetchall()
     stringWords = ''
     for line in lines:
@@ -82,15 +83,36 @@ def delete_word(connection, word):
         tkinter.messagebox.showinfo(title="Error",message="Word does not exist")
 
 def export_list(connection):
-    c = connection.cursor()
     sql = 'SELECT word,wordDate FROM wordTable'
+    c = connection.cursor()
+    c.execute(sql)
     lines = c.fetchall()
+
+    # store list in stringWords
     stringWords = ''
     for line in lines:
         stringWords += str(line[0]) + ' (' + str(line[1]) + ')\n'
-    # refer to old CLI code regarding creating/opening the txt file, writing lines to it, etc.
-    # add button for this
-    # return stringWords
+
+    # filename constant
+    FILENAME = "list.txt"
+
+    # Open list for append+read, or create if it doesn't exist
+    try:
+        file = open(FILENAME)
+    except IOError:
+        print("IO Error")
+        exit
+    except TypeError:
+        print("Type Error")
+        exit
+
+    # write stringWords to txt
+    open(FILENAME, 'w').write(stringWords)
+
+    # Close list file
+    file.close()
+
+    tkinter.messagebox.showinfo(title="Success",message="List exported to list.txt")
 
 def main():
 
@@ -145,17 +167,20 @@ def main():
     # Word retrieval button
     ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=3, sticky=W)
 
-    # List all words
-    wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
-    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=4, sticky=W, pady = 7)
-
     # Delete word
     wordDeletion = ttk.Entry(mainframe, width = 14)
-    wordDeletion.grid(column = 2, row = 5, sticky = (W, E), pady = 7)
-    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=5, sticky=W)
+    wordDeletion.grid(column = 2, row = 4, sticky = (W, E), pady = 7)
+    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky=W)
+
+    # List all words
+    wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
+    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=5, sticky=W, pady = 7)
+
+    # Export list
+    ttk.Button(mainframe, text="Export list to txt", command=lambda: export_list(connection)).grid(column=3, row=6, sticky=W)
 
     # Exit program
-    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=6, sticky=W, pady = 7)
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=7, sticky=W, pady = 7)
 
     root.mainloop()
 
