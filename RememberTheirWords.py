@@ -5,6 +5,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
 from sqlite3 import Error
+import datetime
 
 # For random word output
 from random import randrange
@@ -34,6 +35,12 @@ def insert_word(connection, word, date):
     if word == '':
         tkinter.messagebox.showinfo(title="Error",message="No word entered")
         return
+    if date != '':
+        try:
+            datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            tkinter.messagebox.showinfo(title="Error",message="Incorrect date format, please try again")
+            return
     if search_words(connection, word) == True:
         tkinter.messagebox.showinfo(title="Error",message="Word already exists in database")
         return
@@ -100,10 +107,10 @@ def export_list(connection):
     try:
         file = open(FILENAME)
     except IOError:
-        print("IO Error")
+        tkinter.messagebox.showinfo(title="Error",message="List file IO Error")
         exit
     except TypeError:
-        print("Type Error")
+        tkinter.messagebox.showinfo(title="Error",message="List file Type Error")
         exit
 
     # write stringWords to txt
