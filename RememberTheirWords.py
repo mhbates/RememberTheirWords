@@ -166,28 +166,28 @@ def main():
     dateEntry.grid(column = 2, row = 2, sticky = (W,E))
 
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get(), dateEntry.get()),wordEntry.delete(0,'end'),dateEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky=W, pady = 7, ipady = 10, ipadx = 10)
+    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get(), dateEntry.get()),wordEntry.delete(0,'end'),dateEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky=W, pady = 7, padx = 10, ipady = 10, ipadx = 10)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
     wordRetrieval.grid(column = 2, row = 3, sticky = (W, E), pady = 7)
     # Word retrieval button
-    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=3, sticky=W)
+    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=3, sticky=W, padx = 10)
 
     # Delete word
     wordDeletion = ttk.Entry(mainframe, width = 14)
     wordDeletion.grid(column = 2, row = 4, sticky = (W, E), pady = 7)
-    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky=W)
+    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky=W, padx = 10)
 
     # List all words
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
-    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=5, sticky=W, pady = 7)
+    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=5, sticky=W, pady = 7, padx = 10)
 
     # Export list
-    ttk.Button(mainframe, text="Export list to txt", command=lambda: export_list(connection)).grid(column=3, row=6, sticky=W)
+    ttk.Button(mainframe, text="Export list to txt", command=lambda: export_list(connection)).grid(column=3, row=6, sticky=W, padx = 10)
 
     # Exit program
-    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=7, sticky=W, pady = 7)
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=7, sticky=W, pady = 7, padx = 10)
 
     root.mainloop()
 
