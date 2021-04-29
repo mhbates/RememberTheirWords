@@ -1,20 +1,18 @@
-# For GUI
+# GUI
 import tkinter
 from tkinter import ttk
-from tkinter import messagebox
+
+# Database
 import sqlite3
-from sqlite3 import Error
+
+# Word entry timestamps
 import datetime
 
-# For random word output
-from random import randrange
-
 def create_connection(db_file):
-    # create a database connection to a SQLite database
     connection = None
     try:
         connection = sqlite3.connect(db_file)
-    except Error as e:
+    except sqlite3.Error as e:
         print(e)
     return connection
 
@@ -27,7 +25,7 @@ def create_table(connection, create_table_sql):
     try:
         c = connection.cursor()
         c.execute(create_table_sql)
-    except Error as e:
+    except sqlite3.Error as e:
         print(e)
 
 def insert_word(connection, word, date):
@@ -102,7 +100,7 @@ def export_list(connection):
     # filename constant
     FILENAME = "list.txt"
 
-    # Open list for append+read, or create if it doesn't exist
+    # Open list for writing, or create if it doesn't exist
     try:
         file = open(FILENAME)
     except IOError:
