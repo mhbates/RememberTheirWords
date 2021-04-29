@@ -1,6 +1,7 @@
 # GUI
 import tkinter
 from tkinter import ttk
+from tkinter import messagebox
 
 # Database
 import sqlite3
@@ -16,15 +17,11 @@ def create_connection(db_file):
         print(e)
     return connection
 
-def create_table(connection, create_table_sql):
-    """ create a table from the `create_table_sql` statement
-    :param connection: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
+def create_table(connection):
+    sql = 'CREATE TABLE IF NOT EXISTS wordTable (id integer PRIMARY KEY, word text NOT NULL, wordDate date)'
     try:
         c = connection.cursor()
-        c.execute(create_table_sql)
+        c.execute(sql)
     except sqlite3.Error as e:
         print(e)
 
@@ -124,14 +121,9 @@ def main():
     database = r"database.sqlite3"
     connection = create_connection(database)
 
-    # Define database table
-    sql_create_table = """ CREATE TABLE IF NOT EXISTS wordTable (
-        id integer PRIMARY KEY, word text NOT NULL, wordDate date
-        ) """
-
     # Create table if it doesn't exist
     if connection is not None:
-        create_table(connection, sql_create_table)
+        create_table(connection)
     else:
         print("No database connection")
 
