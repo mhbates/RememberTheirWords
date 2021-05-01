@@ -99,7 +99,7 @@ def export_list(connection):
 
     # Open list for writing, or create if it doesn't exist
     try:
-        file = open(FILENAME)
+        file = open(FILENAME, 'w')
     except IOError:
         tkinter.messagebox.showinfo(title="Error",message="List file IO Error")
         exit
