@@ -1,4 +1,2 @@
 # Remember Their Words
-Enter new words that your child learns so that you don't forget them. Randomly pull words from the list to ask your child.
-
-At a certain point in your child's development, it might become harder to keep up with how fast they learn new words, gestures, etc. When you enter those things into the program, it will add them to a list along with a timestamp. You can then do things like view the whole list or randomly pull a word from the list to ask your child about.
+At a certain point in your child's development, it might become harder to keep up with how fast they learn new words, gestures, etc. You can enter these things into the program, along with a timestamp. You can then do things like view the whole list or randomly pull a word from the list to ask your child about. Words are stored in a SQLite database and can be exported to a txt file.
