@@ -18,14 +18,14 @@ def create_connection(db_file):
     return connection
 
 def create_table(connection):
-    sql = 'CREATE TABLE IF NOT EXISTS wordTable (id integer PRIMARY KEY, word text NOT NULL, wordDate date)'
+    sql = 'CREATE TABLE IF NOT EXISTS wordTable (id integer PRIMARY KEY, word text NOT NULL, wordDate date, description text)'
     try:
         c = connection.cursor()
         c.execute(sql)
     except sqlite3.Error as e:
         print(e)
 
-def insert_word(connection, word, date):
+def insert_word(connection, word, date, description):
     if word == '':
         tkinter.messagebox.showinfo(title="Error",message="No word entered")
         return
@@ -38,9 +38,9 @@ def insert_word(connection, word, date):
     if search_words(connection, word) == True:
         tkinter.messagebox.showinfo(title="Error",message="Word already exists in database")
         return
-    sql = 'INSERT INTO wordTable(word, wordDate) VALUES(?,?)'
+    sql = 'INSERT INTO wordTable(word, wordDate, description) VALUES(?,?,?)'
     c = connection.cursor()
-    c.execute(sql, [word,date])
+    c.execute(sql, [word,date,description])
     connection.commit()
     return c.lastrowid
 
@@ -55,13 +55,13 @@ def grab_word(connection):
     return stringWords
 
 def list_words(connection):
-    sql = 'SELECT word,wordDate FROM wordTable'
+    sql = 'SELECT word,wordDate,description FROM wordTable'
     c = connection.cursor()
     c.execute(sql)
     lines = c.fetchall()
     stringWords = ''
     for line in lines:
-        stringWords += str(line[0]) + ' (' + str(line[1]) + ')\n'
+        stringWords += str(line[0]) + ' (' + str(line[1]) + ')' + ' - ' + str(line[2]) + '\n'
     return stringWords
 
 def search_words(connection, word):
@@ -84,7 +84,7 @@ def delete_word(connection, word):
         tkinter.messagebox.showinfo(title="Error",message="Word does not exist")
 
 def export_list(connection):
-    sql = 'SELECT word,wordDate FROM wordTable'
+    sql = 'SELECT word,wordDate,description FROM wordTable'
     c = connection.cursor()
     c.execute(sql)
     lines = c.fetchall()
@@ -92,7 +92,7 @@ def export_list(connection):
     # store list in stringWords
     stringWords = ''
     for line in lines:
-        stringWords += str(line[0]) + ' (' + str(line[1]) + ')\n'
+        stringWords += str(line[0]) + ' (' + str(line[1]) + ')' + ' - ' + str(line[2]) + '\n'
 
     # filename constant
     FILENAME = "list.txt"
@@ -148,35 +148,41 @@ def main():
     wordEntry = ttk.Entry(mainframe, width = 14)
     wordEntry.grid(column = 2, row = 1, sticky = ('W', 'E'))
 
+    # Description entry box
+    descEntryLabel = ttk.Label(mainframe, text = "Enter description here: ")
+    descEntryLabel.grid(column = 1, row = 2, sticky = ('E'))
+    descEntry = ttk.Entry(mainframe, width = 14)
+    descEntry.grid(column = 2, row = 2, sticky = ('W', 'E'))
+
     # Date entry box
     dateEntryLabel = ttk.Label(mainframe, text = "Enter date (yyyy-mm-dd) here: ")
-    dateEntryLabel.grid(column = 1, row = 2, sticky = ('E'))
+    dateEntryLabel.grid(column = 1, row = 3, sticky = ('E'))
     dateEntry = ttk.Entry(mainframe, width = 14)
-    dateEntry.grid(column = 2, row = 2, sticky = ('W', 'E'))
+    dateEntry.grid(column = 2, row = 3, sticky = ('W', 'E'))
 
     # Word entry button
-    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get(), dateEntry.get()),wordEntry.delete(0,'end'),dateEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=2, sticky='W', pady = 7, padx = 10, ipady = 10, ipadx = 10)
+    ttk.Button(mainframe, text="Enter word", command=lambda: [insert_word(connection, wordEntry.get(), dateEntry.get(), descEntry.get()),wordEntry.delete(0,'end'),dateEntry.delete(0,'end'), descEntry.delete(0,'end')]).grid(column=3, row=1, rowspan=3, sticky='W', pady = 7, padx = 10, ipady = 10, ipadx = 10)
 
     # Retrieve random word
     wordRetrieval = ttk.Entry(mainframe, width = 14)
-    wordRetrieval.grid(column = 2, row = 3, sticky = ('W', 'E'), pady = 7)
+    wordRetrieval.grid(column = 2, row = 4, sticky = ('W', 'E'), pady = 7)
     # Word retrieval button
-    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=3, sticky='W', padx = 10)
+    ttk.Button(mainframe, text="Retrieve random word", command=lambda: [wordRetrieval.delete(0,'end'),wordRetrieval.insert(0, grab_word(connection))]).grid(column=3, row=4, sticky='W', padx = 10)
 
     # Delete word
     wordDeletion = ttk.Entry(mainframe, width = 14)
-    wordDeletion.grid(column = 2, row = 4, sticky = ('W', 'E'), pady = 7)
-    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=4, sticky='W', padx = 10)
+    wordDeletion.grid(column = 2, row = 5, sticky = ('W', 'E'), pady = 7)
+    ttk.Button(mainframe, text="Delete word", command=lambda: [delete_word(connection, wordDeletion.get()),wordDeletion.delete(0,'end')]).grid(column=3, row=5, sticky='W', padx = 10)
 
     # List all words
     wordList = lambda: tkinter.messagebox.showinfo(title="All Words",message=list_words(connection))
-    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=5, sticky='W', pady = 7, padx = 10)
+    ttk.Button(mainframe, text="List all words", command=wordList).grid(column=3, row=6, sticky='W', pady = 7, padx = 10)
 
     # Export list
-    ttk.Button(mainframe, text="Export list to txt", command=lambda: export_list(connection)).grid(column=3, row=6, sticky='W', padx = 10)
+    ttk.Button(mainframe, text="Export list to txt", command=lambda: export_list(connection)).grid(column=3, row=7, sticky='W', padx = 10)
 
     # Exit program
-    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=7, sticky='W', pady = 7, padx = 10)
+    ttk.Button(mainframe, text="Exit", command=root.destroy).grid(column=3, row=8, sticky='W', pady = 7, padx = 10)
 
     root.mainloop()
 
